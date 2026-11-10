@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IOG Material Tracker – ELC</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f6f8;--card:#fff;--tx:#1b2430;--mut:#667085;--line:#e3e7ee;--pri:#1d4ed8;--priTx:#fff;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--bar:#dbe4ff}
+:root:not([data-theme="light"]){color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141b;--card:#18202b;--tx:#e8edf4;--mut:#93a0b3;--line:#2a3544;--pri:#6c9cff;--priTx:#0b1220;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--bar:#26365c}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f141b;--card:#18202b;--tx:#e8edf4;--mut:#93a0b3;--line:#2a3544;--pri:#6c9cff;--priTx:#0b1220;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--bar:#26365c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+h1{font-size:16px;margin:0;flex:1;min-width:180px}
+nav{display:flex;gap:6px}
+button,select,input,textarea{font:inherit;color:var(--tx)}
+.tab,.btn{border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:8px;cursor:pointer}
+.tab.on,.btn.pri{background:var(--pri);color:var(--priTx);border-color:var(--pri)}
+.btn.del{color:var(--bad)}
+.x{border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:var(--mut);padding:0 6px}
+.hd{display:flex;align-items:center;justify-content:space-between}
+main{max-width:1000px;margin:0 auto;padding:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kpi,.panel,.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi b{display:block;font-size:26px;line-height:1.2}.kpi span{color:var(--mut);font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+h2{font-size:14px;margin:0 0 10px}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.row .l{width:150px;flex:none}.row .t{flex:1;background:var(--bar);border-radius:6px;height:16px;overflow:hidden}
+.row .t i{display:block;height:100%;background:var(--pri)}.row .n{width:26px;text-align:right}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tools input,.tools select,.f input,.f select,.f textarea{padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);width:100%}
+.tools input{flex:2;min-width:160px}.tools select{flex:1;min-width:120px;width:auto}
+.item{margin-bottom:8px;cursor:pointer}.item h3{margin:0 0 4px;font-size:14px;line-height:1.5}.q{color:var(--mut);font-weight:400;font-size:13px}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:6px}.site{background:var(--pri);color:var(--priTx);font-weight:700;font-size:13px;padding:2px 10px;border-radius:6px;letter-spacing:.5px}.top .no{color:var(--mut);font-size:12px}
+.meta{color:var(--mut);font-size:12px;display:flex;gap:10px;flex-wrap:wrap}
+.rm{margin-top:6px;font-size:13px;white-space:pre-line;border-left:3px solid var(--line);padding-left:8px}.rm b{color:var(--mut);font-weight:600}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;border:1px solid var(--line);font-size:12px}
+.warn{color:var(--warn);font-weight:600}.bad{color:var(--bad);font-weight:600}.ok{color:var(--ok)}
+.pg{height:6px;background:var(--bar);border-radius:4px;margin-top:8px;overflow:hidden}.pg i{display:block;height:100%;background:var(--ok)}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--tx);width:min(640px,96vw);max-height:92vh;padding:14px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f label{font-size:12px;color:var(--mut);display:block}
+.f .w{grid-column:1/-1}.f textarea{min-height:64px}
+.ln{display:flex;gap:6px;margin-bottom:6px;align-items:center}.f .ln .ld{flex:1;width:auto}.f .ln .lq{width:34%;flex:none}
+@media(max-width:560px){.f{grid-template-columns:1fr}}
+.foot{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.msg{color:var(--mut);padding:20px;text-align:center}
+.app{display:flex;min-height:100vh}.mainp{flex:1;min-width:0}
+.side{width:210px;flex:none;background:linear-gradient(180deg,#1f2a44,#111827);color:#fff;padding:14px 12px;position:sticky;top:0;align-self:flex-start;height:100vh}
+.brand{font-weight:700;font-size:16px;padding:8px 10px 14px;border-bottom:1px solid rgba(255,255,255,.15);margin-bottom:12px;line-height:1.3}.brand small{font-weight:400;opacity:.7}
+.side nav{flex-direction:column}.side .tab{background:none;border:0;color:#e5e9f2;text-align:left;padding:11px 12px;display:flex;gap:10px;align-items:center;width:100%}
+.side .tab i{font-style:normal}.side .tab.on{background:linear-gradient(60deg,#ab47bc,#8e24aa);color:#fff;box-shadow:0 4px 12px rgba(142,36,170,.45)}
+.live{position:absolute;bottom:14px;left:18px;font-size:12px;opacity:.75}
+header{background:transparent;border:0;padding:14px 16px 0}h1{font-size:20px}
+.kpi,.item,.cc{border:0;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px 12px;margin-top:6px}.tools #dsite{flex:none;width:220px}.kpi{position:relative;padding:12px 14px 10px;margin-top:22px}
+.kpi .ic{position:absolute;top:-20px;left:14px;width:56px;height:56px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:24px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.kpi .txt{text-align:right;min-height:48px}.kpi .txt b{font-size:26px}
+.kpi .ft{border-top:1px solid var(--line);margin-top:8px;padding-top:6px;font-size:12px;color:var(--mut)}
+.purple{background:linear-gradient(60deg,#ab47bc,#8e24aa)}.blue{background:linear-gradient(60deg,#26c6da,#00acc1)}.green{background:linear-gradient(60deg,#66bb6a,#43a047)}.orange{background:linear-gradient(60deg,#ffa726,#fb8c00)}.red{background:linear-gradient(60deg,#ef5350,#e53935)}
+.grid2{margin-top:34px;gap:34px 12px}.cc{display:flow-root;background:var(--card);border-radius:12px}
+.ch{margin:-20px 14px 0;border-radius:10px;padding:14px;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.22)}.ch h2{margin:0;font-size:16px}.ch>span{font-size:12px;opacity:.9}
+.cb{padding:12px 14px}.cb h2{margin:0 0 2px}.sc{max-height:260px;overflow-y:auto}
+.bars{display:flex;align-items:flex-end;gap:8px;height:140px}.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:11px}
+.col i{display:block;width:70%;background:rgba(255,255,255,.88);border-radius:4px 4px 0 0;min-height:3px}.col .v{font-weight:700;margin-bottom:3px}.col em{font-style:normal;margin-top:5px;text-align:center;line-height:1.1;font-size:10px}
+@media(max-width:800px){.app{display:block}.side{width:auto;height:auto;position:static;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px}.brand{border:0;margin:0;padding:4px 8px}.side nav{flex-direction:row;gap:4px}.side .tab{width:auto;padding:8px 12px}.live{display:none}}
+@media(max-width:560px){.kpis{grid-template-columns:1fr 1fr;gap:26px 10px}.kpi{padding:10px}.kpi .ic{width:42px;height:42px;font-size:19px;top:-16px;left:10px}.kpi .txt{min-height:36px;font-size:12px}.kpi .txt b{font-size:22px}.kpi .ft{display:none}.tools #dsite{width:100%}}
+</style>
+</head>
+<body>
+<div class="app"><aside class="side"><div class="brand">IOG Material<br><small>Tracker · ELC</small></div>
+<nav><button class="tab on" data-v="dash"><i>📊</i> Dashboard</button><button class="tab" data-v="list"><i>📋</i> Daftar</button></nav><div class="live"><span id="st"></span></div></aside>
+<div class="mainp"><header><h1 id="pt">Dashboard</h1><span style="flex:1"></span>
+<button class="btn pri" id="add">+ Tambah</button><button class="btn" id="exp" title="Unduh semua data (CSV, bisa dibuka di Excel)">⬇ Ekspor</button>
+</header>
+<main id="main"><div class="msg">Memuat data…</div></main></div></div>
+<dialog id="dlg"><div class="f" id="form"></div><div class="foot" id="foot"></div></dialog>
+<script>
+var SITES=["SPS","SNB","BKP","HDL","CPU","HCA","NPU","SPU","POMA"],LABS=["ELC"],APPR=["TADM MTH","MTH MNT","PO OSF","DONE"],
+PROC=["Pending","In Progress","Completed","Cancelled"],DELV=["Not Shipped","In Transit","Delivered","Delayed"],
+TAHAP=["1. Permintaan","2. Proses Pengadaan","3. Menunggu Pengiriman","4. Dalam Pengiriman","5. Diterima"],
+BOBOT={"1. Permintaan":10,"2. Proses Pengadaan":35,"3. Menunggu Pengiriman":60,"4. Dalam Pengiriman":80,"5. Diterima":100};
+var FIELDS=[["site","Site *","sel",SITES],["lab","Lab Office","sel",LABS],["desc","Material Description *","ta"],["qty","Quantity *","ta"],["kimap","Kimap","tx"],["price","Unit Price","tx"],
+["pr","No. PR","tx"],["email","Email","tx"],["reqDate","Requirement Date","dt"],["vendor","Vendor","tx"],["approval","Approval Form","sel",APPR],["subDate","Submission Date","dt"],
+["proc","Procurement Status","sel",PROC],["delDate","Delivery Date","dt"],["del","Delivery Status","sel",DELV],["po","PO","tx"],["gep","No. GEP","tx"],["remarks","Remarks","ta"]];
+var items=[],view="dash",dsite="",db=null,canWrite=true,q="",fs="",ft="",loaded=false;
+function $(s){return document.querySelector(s)}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
+function norm(v,map,empty){var s=String(v||"").trim().toLowerCase();if(!s)return empty;
+ for(var k in map)if(map[k].indexOf(s)>-1)return k;return "?"}
+function calc(x){
+ var p=norm(x.proc,{"Completed":["completed","done","delivery"],"In Progress":["in progress","on proses"],"Pending":["pending"],"Cancelled":["cancelled","canceled"]},"Pending");
+ var d=norm(x.del,{"Delivered":["delivered","done"],"In Transit":["in transit"],"Delayed":["delayed"],"Not Shipped":["not shipped","waiting"]},"Not Shipped");
+ var t=p=="Cancelled"?"Dibatalkan":d=="Delivered"?TAHAP[4]:(d=="In Transit"||d=="Delayed")?TAHAP[3]:p=="Completed"?TAHAP[2]:p=="In Progress"?TAHAP[1]:TAHAP[0];
+ var w="";if(p=="?"||d=="?")w="Status tak dikenali";
+ else if(d=="Delivered"&&/menunggu|waiting/i.test(x.remarks||""))w="Cek: remarks menunggu";
+ else if(t!="Dibatalkan"&&d!="Delivered"&&/^\d{4}-\d\d-\d\d$/.test(x.delDate||"")){
+  var n=Math.floor((new Date().setHours(0,0,0,0)-new Date(x.delDate+"T00:00:00"))/864e5);if(n>0)w="Lewat kirim "+n+" hari"}
+ return{p:p,d:d,t:t,pg:BOBOT[t]||null,w:w}}
+function render(){
+ var m=$("#main");if(!loaded){return}
+ var rows=items.filter(function(x){return view!="dash"||!dsite||x.site==dsite}).map(function(x){return{x:x,c:calc(x)}});
+ if(view=="dash"){
+  var act=rows.filter(function(r){return r.c.t!="Dibatalkan"}),pgs=act.map(function(r){return r.c.pg}),
+  avg=pgs.length?Math.round(pgs.reduce(function(a,b){return a+b},0)/pgs.length):0,
+  rec=act.filter(function(r){return r.c.t==TAHAP[4]}).length,
+  proc=act.filter(function(r){return/^[234]\./.test(r.c.t)}).length,
+  late=rows.filter(function(r){return/^Lewat/.test(r.c.w)}).length,
+  chk=rows.filter(function(r){return/^(Cek|Status)/.test(r.c.w)}).length;
+  var sl=SITES.filter(function(s){return items.some(function(x){return x.site==s})});
+  var h='<div class="tools"><select id="dsite"><option value="">Semua site</option>'+sl.map(function(s){return'<option'+(s==dsite?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div><div class="kpis">'+[["Total item aktif",act.length,"📦","purple","tidak termasuk dibatalkan"],["Progress rata-rata",avg+"%","📈","blue","rata-rata bobot tahap"],["Sudah diterima",rec,"✅","green",Math.round(rec/Math.max(1,act.length)*100)+"% dari item aktif"],["Dalam proses",proc,"🚚","orange","tahap 2 sampai 4"],["Lewat jadwal kirim",late,"⏰","red","belum Delivered, tanggal lewat"],["Perlu dicek",chk,"⚠️","purple","data saling bertentangan"]]
+   .map(function(k){return'<div class="kpi"><div class="ic '+k[3]+'">'+k[2]+'</div><div class="txt"><span class="meta" style="display:block">'+k[0]+'</span><b>'+k[1]+'</b></div><div class="ft">'+k[4]+'</div></div>'}).join("")+'</div><div class="grid2"><div class="cc"><div class="ch green"><div class="bars">';
+  var mx=Math.max(1,act.length);
+  TAHAP.forEach(function(t){var n=act.filter(function(r){return r.c.t==t}).length;
+   h+='<div class="col"><span class="v">'+n+'</span><i style="height:'+Math.round(n/mx*90)+'px"></i><em>'+["Permintaan","Pengadaan","Menunggu","Pengiriman","Diterima"][TAHAP.indexOf(t)]+'</em></div>'});
+  var att=rows.filter(function(r){return r.c.w});
+  h+='</div></div><div class="cb"><h2>Progress per tahap</h2><span class="meta">jumlah item aktif di setiap tahap</span></div></div><div class="cc"><div class="ch orange"><h2>Perlu perhatian</h2><span>'+att.length+' item perlu ditindaklanjuti</span></div><div class="cb sc">'+(att.length?att.map(function(r){
+   return'<div class="row" data-id="'+esc(r.x.id)+'" style="cursor:pointer"><span class="'+(/^Lewat/.test(r.c.w)?'bad':'warn')+'">'+esc(r.c.w)+'</span><span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(String(r.x.desc).split("\n")[0])+' · '+esc(r.x.site)+'</span></div>'}).join(""):'<div class="meta">Tidak ada.</div>')+'</div></div></div>';
+  m.innerHTML=h}
+ else{
+  var sites=SITES.filter(function(s){return items.some(function(x){return x.site==s})});
+  var f=rows.filter(function(r){var t=(r.x.no+" "+r.x.desc+" "+r.x.vendor+" "+r.x.pr+" "+r.x.po).toLowerCase();
+   return(!q||t.indexOf(q)>-1)&&(!fs||r.x.site==fs)&&(!ft||r.c.t==ft)});
+  var h='<div class="tools"><input id="q" placeholder="Cari material, vendor, PR, PO…" value="'+esc(q)+'"><select id="fs"><option value="">Semua site</option>'+sites.map(function(s){return'<option'+(s==fs?" selected":"")+'>'+s+'</option>'}).join("")+'</select><select id="ft"><option value="">Semua tahap</option>'+TAHAP.concat(["Dibatalkan"]).map(function(s){return'<option'+(s==ft?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>';
+  h+=f.length?f.map(function(r){var x=r.x,c=r.c;return'<div class="item" data-id="'+esc(x.id)+'"><div class="top"><span class="site">'+esc(x.site||"?")+'</span><span class="no">'+esc(x.no)+'</span></div><h3>'+pairs(x)+'</h3><div class="meta">'+(String(x.desc||"").indexOf("\n")<0?'<span>Qty: '+esc(x.qty)+'</span>':'')+'<span class="tag">'+esc(c.t)+'</span>'+(c.w?'<span class="'+(/^Lewat/.test(c.w)?'bad':'warn')+'">'+esc(c.w)+'</span>':'')+'</div>'+(x.remarks?'<div class="rm"><b>Remarks:</b> '+esc(x.remarks)+'</div>':'')+(c.pg!=null?'<div class="pg"><i style="width:'+c.pg+'%"></i></div>':'')+'</div>'}).join(""):'<div class="msg">Tidak ada data.</div>';
+  m.innerHTML=h;
+  $("#q").oninput=function(e){q=e.target.value.toLowerCase();var p=e.target.selectionStart;render();var i=$("#q");i.focus();i.setSelectionRange(p,p)};
+  $("#fs").onchange=function(e){fs=e.target.value;render()};$("#ft").onchange=function(e){ft=e.target.value;render()}}
+ var sd=$("#dsite");if(sd)sd.onchange=function(e){dsite=e.target.value;render()};
+ m.querySelectorAll("[data-id]").forEach(function(e){e.onclick=function(){openForm(e.getAttribute("data-id"))}})}
+function pairs(x){var ds=String(x.desc||"").split("\n"),qs=String(x.qty==null?"":x.qty).split("\n");
+ if(ds.length<2)return esc(x.desc||"(tanpa deskripsi)");
+ return ds.map(function(d,i){return esc(d)+(qs[i]?' <span class="q">\u2014 '+esc(qs[i])+'</span>':'')}).join("<br>")}
+function addLn(d,q){var r=document.createElement("div");r.className="ln";
+ var a=document.createElement("input"),b=document.createElement("input"),k=document.createElement("button");
+ a.className="ld";a.placeholder="Material";a.value=d||"";b.className="lq";b.placeholder="Qty";b.value=q||"";
+ k.type="button";k.className="x";k.textContent="\u00d7";k.setAttribute("aria-label","Hapus baris");k.onclick=function(){r.remove()};
+ r.appendChild(a);r.appendChild(b);r.appendChild(k);$("#ln").appendChild(r)}
+function nextNo(){var n=0;items.forEach(function(x){var k=parseInt(x.no);if(k>n)n=k});return(n+1)+"-ELC"}
+function openForm(id){
+ var x=id?items.filter(function(i){return i.id==id})[0]:{lab:"ELC",proc:"Pending",del:"Not Shipped"};
+ var h='<div class="w hd"><b>'+(id?"Edit "+esc(x.no):"Material baru")+'</b><button class="x" id="xc" aria-label="Tutup">×</button></div>';
+ FIELDS.forEach(function(f){if(f[0]=="qty")return;
+  if(f[0]=="desc"){h+='<div class="w"><label>Material dan Quantity * (satu baris per material)</label><div id="ln"></div><button type="button" class="btn" id="al">+ Tambah baris</button></div>';return}
+  var v=x[f[0]]==null?"":x[f[0]],c=f[2]=="ta"?"w":"";
+  var el=f[2]=="sel"?'<select data-k="'+f[0]+'"><option value=""></option>'+f[3].map(function(o){return'<option'+(o==v?" selected":"")+'>'+o+'</option>'}).join("")+(v&&f[3].indexOf(v)<0?'<option selected>'+esc(v)+'</option>':'')+'</select>'
+   :f[2]=="ta"?'<textarea data-k="'+f[0]+'">'+esc(v)+'</textarea>':'<input data-k="'+f[0]+'" '+(f[2]=="dt"?'type="date" value="'+(/^\d{4}-/.test(v)?esc(v):"")+'"':'value="'+esc(v)+'"')+'>';
+  h+='<div class="'+c+'"><label>'+f[1]+'</label>'+el+'</div>'});
+ h+='<div class="w bad" id="err"></div>';$("#form").innerHTML=h;
+ var ds=String(x.desc==null?"":x.desc).split("\n"),qs=String(x.qty==null?"":x.qty).split("\n"),n=Math.max(ds.length,qs.length);
+ for(var i=0;i<n;i++)addLn(ds[i],qs[i]);$("#al").onclick=function(){addLn("","")};
+ $("#foot").innerHTML=(id&&canWrite?'<button class="btn del" id="bd">Hapus</button><span style="flex:1"></span>':"")+'<button class="btn" id="bc">Tutup</button>'+(canWrite?'<button class="btn pri" id="bs">Simpan</button>':"");
+ $("#bc").onclick=$("#xc").onclick=function(){$("#dlg").close()};
+ if(id&&canWrite)$("#bd").onclick=function(){if(confirm("Hapus item ini?"))db.doc("items/"+id).delete().then(function(){$("#dlg").close()},function(e){alert("Gagal menghapus: "+(e&&e.message||e))})};
+ if(canWrite)$("#bs").onclick=function(){
+  var d={};$("#form").querySelectorAll("[data-k]").forEach(function(e){d[e.getAttribute("data-k")]=e.value.trim()});
+  var R=[].slice.call(document.querySelectorAll("#ln .ln")).map(function(r){return[r.children[0].value.trim(),r.children[1].value.trim()]}).filter(function(r){return r[0]||r[1]});
+  d.desc=R.map(function(r){return r[0]}).join("\n");d.qty=R.map(function(r){return r[1]}).join("\n");
+  if(!d.site||!R.some(function(r){return r[0]})||!R.some(function(r){return r[1]})){$("#err").textContent="Wajib diisi: Site, minimal satu Material, dan minimal satu Quantity.";$("#err").scrollIntoView({block:"center"});return}$("#err").textContent="";
+  var now=new Date().toISOString().slice(0,10),p;d.updatedAt=now;
+  if(id)p=db.doc("items/"+id).update(d);else{d.no=nextNo();d.createdAt=now;p=db.collection("items").add(d)}
+  p.then(function(){$("#dlg").close()},function(e){$("#err").textContent="Gagal menyimpan: "+(e&&e.message||e)})};
+ $("#dlg").showModal()}
+document.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){view=b.dataset.v;$("#pt").textContent=view=="dash"?"Dashboard":"Daftar Material";document.querySelectorAll(".tab").forEach(function(t){t.classList.toggle("on",t==b)});render()}});
+$("#dlg").addEventListener("close",function(){render()});
+$("#add").onclick=function(){if(!db||!canWrite){alert("Anda hanya bisa melihat data. Minta akses edit kepada admin.");return}openForm(null)};
+$("#exp").onclick=async function(){
+ var D;try{D=await claude.use("downloads")}catch(e){}
+ if(!D){alert("Fitur unduh tidak tersedia di tampilan ini.");return}
+ var cols=FIELDS.map(function(f){return f[0]}),hd=["No"].concat(FIELDS.map(function(f){return f[1].replace(" *","")}),["Tahap Progres","Progress (%)","Peringatan","Dibuat","Diubah"]);
+ function c(v){v=v==null?"":String(v);return'"'+v.replace(/"/g,'""')+'"'}
+ var ls=[hd.map(c).join(",")];
+ items.forEach(function(x){var k=calc(x);ls.push([x.no].concat(cols.map(function(a){return x[a]}),[k.t,k.pg==null?"":k.pg,k.w,x.createdAt,x.updatedAt]).map(c).join(","))});
+ try{await D.save({filename:"IOG_Material_Tracker_"+new Date().toISOString().slice(0,10)+".csv",data:"\ufeff"+ls.join("\r\n")})}
+ catch(e){if(!e||e.code!="declined")alert("Gagal mengunduh: "+(e&&e.message||e))}};
+var tm=setTimeout(function(){if(!loaded)$("#main").innerHTML='<div class="msg">Data belum bisa dimuat. Pastikan Anda sudah login dan membuka lewat tautan yang dibagikan.</div>'},10000);
+(async function(){
+ try{var u=await claude.use("user");canWrite=u?(u.can("data.write")!==false):true}catch(e){}
+ if(!canWrite)$("#add").style.display="none";
+ db=await claude.use("db");
+ if(!db){return}
+ $("#st").textContent=canWrite?"● realtime":"● realtime · hanya lihat";
+ db.collection("items").onSnapshot(function(s){clearTimeout(tm);loaded=true;
+  items=s.docs.map(function(d){var o=Object.assign({},d.data()||{});o.id=d.id;return o});
+  items.sort(function(a,b){return(parseInt(a.no)||0)-(parseInt(b.no)||0)});
+  if(!$("#dlg").open)render();else if(view=="dash"){}},
+  function(){clearTimeout(tm);$("#main").innerHTML='<div class="msg">Gagal memuat data.</div>'});
+})();
+</script>
+</body>
+</html>
